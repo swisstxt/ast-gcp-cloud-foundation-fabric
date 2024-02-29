@@ -95,6 +95,7 @@ variable "labels" {
 variable "location" {
   description = "Registry location. Use `gcloud beta artifacts locations list' to get valid values."
   type        = string
+  default     = "europe-west6"
 }
 
 variable "mode" {

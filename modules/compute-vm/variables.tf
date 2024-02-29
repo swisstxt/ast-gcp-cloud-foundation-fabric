@@ -380,4 +380,5 @@ variable "tags" {
 variable "zone" {
   description = "Compute zone."
   type        = string
+  zone        = "europe-west6-b"
 }
