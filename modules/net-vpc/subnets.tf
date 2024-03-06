@@ -183,12 +183,6 @@ resource "google_compute_subnetwork" "proxy_only" {
   )
   purpose = each.value.global ? "GLOBAL_MANAGED_PROXY" : "REGIONAL_MANAGED_PROXY"
   role    = each.value.active ? "ACTIVE" : "BACKUP"
-
-  lifecycle {
-    # Until https://github.com/hashicorp/terraform-provider-google/issues/16804 is fixed
-    # ignore permadiff in ipv6_access_type for proxy_only subnets
-    ignore_changes = [ipv6_access_type]
-  }
 }
 
 resource "google_compute_subnetwork" "psc" {
@@ -250,4 +244,21 @@ resource "google_compute_subnetwork_iam_member" "bindings" {
       description = each.value.condition.description
     }
   }
+}
+
+resource "google_compute_network_attachment" "default" {
+  provider    = google-beta
+  for_each    = var.network_attachments
+  project     = var.project_id
+  region      = google_compute_subnetwork.subnetwork[each.value.subnet].region
+  name        = each.key
+  description = each.value.description
+  connection_preference = (
+    each.value.automatic_connection ? "ACCEPT_AUTOMATIC" : "ACCEPT_MANUAL"
+  )
+  subnetworks = [
+    google_compute_subnetwork.subnetwork[each.value.subnet].self_link
+  ]
+  producer_accept_lists = each.value.producer_accept_lists
+  producer_reject_lists = each.value.producer_reject_lists
 }
