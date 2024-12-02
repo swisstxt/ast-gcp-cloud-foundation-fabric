@@ -1,0 +1,16 @@
+name: Sync with Upstream
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # Runs every 12 hours
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: swisstxt/ast-gh-actions/upstream-tag-sync@VAST-294-feat-upstream-tag-sync
+        with:
+          target-repo: swisstxt/ast-gcp-cloud-foundation-fabric
+          upstream-repo: GoogleCloudPlatform/cloud-foundation-fabric
+          github-token: ${{ secrets.GITHUB_TOKEN }}
