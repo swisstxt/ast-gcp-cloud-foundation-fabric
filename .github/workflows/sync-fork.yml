@@ -9,7 +9,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: swisstxt/ast-gh-actions/upstream-tag-sync@VAST-294-feat-upstream-tag-sync
+      - uses: swisstxt/ast-gh-actions/upstream-tag-sync@VAST-294-feat-upstream-tag-sync # temporary until merged
         with:
           target-repo: swisstxt/ast-gcp-cloud-foundation-fabric
           upstream-repo: GoogleCloudPlatform/cloud-foundation-fabric
