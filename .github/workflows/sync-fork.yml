@@ -27,8 +27,18 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # First checkout your repository
       - uses: actions/checkout@v4
-      - uses: swisstxt/ast-gh-actions/upstream-tag-sync@v1.0.0
+
+      # Then checkout the actions repository
+      - name: Checkout actions repo
+        uses: actions/checkout@v4
+        with:
+          repository: swisstxt/ast-gh-actions
+          path: .github/actions/ast-gh-actions
+
+      # Now use the action from local path
+      - uses: ./.github/actions/ast-gh-actions/upstream-tag-sync
         with:
           target-repo: swisstxt/ast-gcp-cloud-foundation-fabric
           upstream-repo: GoogleCloudPlatform/cloud-foundation-fabric
