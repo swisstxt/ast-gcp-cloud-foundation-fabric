@@ -36,6 +36,7 @@ jobs:
         with:
           repository: swisstxt/ast-gh-actions
           path: .github/actions/ast-gh-actions
+          ref: v1.0.0
 
       # Now use the action from local path
       - uses: ./.github/actions/ast-gh-actions/upstream-tag-sync
