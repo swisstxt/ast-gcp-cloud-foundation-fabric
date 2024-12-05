@@ -34,6 +34,7 @@ jobs:
           repository: swisstxt/ast-gh-actions
           ref: main  # or master, depending on your default branch
           path: ast-gh-actions
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./ast-gh-actions/upstream-tag-sync
         with:
