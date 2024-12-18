@@ -33,9 +33,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}  # Explicitly pass the token
           fetch-depth: 0                      # Fetch all history
       - name: Setup GitHub CLI
-        run: |
-          gh auth setup-git
-          gh auth status
+        run: 'gh auth setup-git && gh auth status'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: swisstxt/ast-gh-actions/upstream-tag-sync@v1.0.0
