@@ -21,7 +21,7 @@ on:
 
 permissions:
   contents: write     # using 'write' to allow pushing
-  pull-requests: write
+  issues: write
 
 jobs:
   sync:
