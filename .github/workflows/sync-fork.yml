@@ -32,7 +32,11 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}  # Explicitly pass the token
           fetch-depth: 0                      # Fetch all history
-      - uses: swisstxt/ast-gh-actions/upstream-tag-sync@v1.0.0
+      - name: Setup GitHub CLI
+        run: 'gh auth setup-git && gh auth status'
+        env:
+          GITH_TOKEN: ${{ secrets.GITHUB_TOKEN }}UB
+      - uses: swisstxt/ast-gh-actions/upstream-tag-sync@VAST-294-upstream-tag-sync
         with:
           target-repo: swisstxt/ast-gcp-cloud-foundation-fabric
           upstream-repo: GoogleCloudPlatform/cloud-foundation-fabric
