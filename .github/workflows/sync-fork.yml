@@ -32,7 +32,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}  # Explicitly pass the token
           fetch-depth: 0                      # Fetch all history
-      - uses: swisstxt/ast-gh-actions/upstream-tag-sync@main
+      - uses: swisstxt/ast-gh-actions/upstream-tag-sync@VAST-294-upstream-tag-sync
         with:
           target-repo: swisstxt/ast-gcp-cloud-foundation-fabric
           upstream-repo: GoogleCloudPlatform/cloud-foundation-fabric
