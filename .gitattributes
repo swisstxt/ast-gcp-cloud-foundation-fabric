@@ -1,1 +1,5 @@
 *.md ident
+
+# Ignore workflow files during merge
+.github/workflows/* merge=ours
+.github/workflows/**/* merge=ours

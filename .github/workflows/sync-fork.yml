@@ -22,7 +22,6 @@ on:
 permissions:
   contents: write     # using 'write' to allow pushing
   pull-requests: write
-  workflows: write      # Needed for updating workflow files
 
 jobs:
   sync:
