@@ -1,0 +1,164 @@
+[command]/usr/bin/git diff --binary 1de21fe06daeb0461d59f82d4e60b2d32097585a origin/master
+diff --git a/.github/workflows/daily-tag.yml b/.github/workflows/daily-tag.yml
+deleted file mode 100644
+index 6a95e649..00000000
+--- a/.github/workflows/daily-tag.yml
++++ /dev/null
+@@ -1,45 +0,0 @@
+-# Copyright 2023 Google LLC
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#      http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-name: |
+-  Create daily release tags
+-
+-on:
+-  workflow_dispatch:
+-  schedule:
+-    - cron: "0 2 * * *"
+-
+-permissions:
+-  contents: write
+-
+-jobs:
+-  daily-tag:
+-    name: "Create tag on master if there was activity in last 24 hours"
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: actions/checkout@v4
+-
+-      - name: "Check changes and tag"
+-        run: |
+-          CHANGES=$(git log --since="1 day ago" --name-only --pretty=format: )
+-
+-          if [ "x$CHANGES" != "x" ] ; then
+-            TAG="daily-$(date +%Y.%m.%d)"
+-            git tag $TAG
+-            git push origin $TAG
+-
+-            echo "Created new tag: $TAG"
+-          else
+-            echo "No changes in last 24 hours"
+-          fi
+diff --git a/.github/workflows/release.yml b/.github/workflows/release.yml
+deleted file mode 100644
+index b4e30d96..00000000
+--- a/.github/workflows/release.yml
++++ /dev/null
+@@ -1,48 +0,0 @@
+-# Copyright 2024 Google LLC
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#      http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-name: |
+-  Create a new release
+-
+-on:
+-  workflow_dispatch:
+-    inputs:
+-      version:
+-        description: "Release version"
+-        required: true
+-      changelog:
+-        description: "I have updated the CHANGELOG"
+-        required: true
+-        type: boolean
+-
+-permissions:
+-  contents: write
+-
+-jobs:
+-  release:
+-    name: "Release new version"
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: actions/checkout@v4
+-
+-      - name: "Validate input"
+-        run: |
+-          [[ "${{ github.event.inputs.changelog }}" != "true" ]] && { echo 'You didn''t update the changelog.' ; exit 1; }
+-          [[ -n "${{ github.event.inputs.version }}" ]] || { echo 'Version not specified!'; exit 1; }
+-          [[ "${{ github.event.inputs.version }}" != v* ]] && { echo 'Version does not start with v!' ; exit 1; }
+-
+-      - name: "Tag and release"
+-        run: |
+-          git tag ${{ github.event.inputs.version }}
+-          git push origin ${{ github.event.inputs.version }}
+diff --git a/.github/workflows/labeler.yml b/.github/workflows/sync-fork.yml
+similarity index 55%
+rename from .github/workflows/labeler.yml
+rename to .github/workflows/sync-fork.yml
+index 669e5d67..d81596bd 100644
+--- a/.github/workflows/labeler.yml
++++ b/.github/workflows/sync-fork.yml
+@@ -1,4 +1,4 @@
+-# Copyright 2023 Google LLC
++# Copyright 2024 Google LLC
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -12,22 +12,23 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-name: "Label Pull Requests"
++name: Sync with Upstream
+ 
+ on:
+-  # only used for PRs that involve labeler itself
+-  # https://github.com/actions/labeler?tab=readme-ov-file#notes-regarding-pull_request_target-event
+-  # pull_request:
+-  pull_request_target:
++  schedule:
++    - cron: '0 */12 * * *'  # Runs every 12 hours
++  workflow_dispatch:  # Allows manual trigger
++
++permissions:
++  contents: read
++  pull-requests: write
+ 
+ jobs:
+-  triage:
+-    permissions:
+-      contents: read
+-      pull-requests: write
++  sync:
+     runs-on: ubuntu-latest
+     steps:
+-    - uses: actions/labeler@v5
+-      with:
+-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+-        sync-labels: true
++      - uses: swisstxt/ast-gh-actions/upstream-tag-sync@v1.0.0
++        with:
++          target-repo: swisstxt/ast-gcp-cloud-foundation-fabric
++          upstream-repo: GoogleCloudPlatform/cloud-foundation-fabric
++          github-token: ${{ secrets.GITHUB_TOKEN }}
+diff --git a/fast/stages/2-networking-b-nva/data/subnets/prod/prod-default-ew1.yaml b/fast/stages/2-networking-b-nva/data/subnets/prod/prod-default-pri.yaml
+similarity index 100%
+rename from fast/stages/2-networking-b-nva/data/subnets/prod/prod-default-ew1.yaml
+rename to fast/stages/2-networking-b-nva/data/subnets/prod/prod-default-pri.yaml
+diff --git a/fast/stages/2-networking-b-nva/data/subnets/prod/prod-default-ew4.yaml b/fast/stages/2-networking-b-nva/data/subnets/prod/prod-default-sec.yaml
+similarity index 100%
+rename from fast/stages/2-networking-b-nva/data/subnets/prod/prod-default-ew4.yaml
+rename to fast/stages/2-networking-b-nva/data/subnets/prod/prod-default-sec.yaml
